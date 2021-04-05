@@ -1,2 +1,6 @@
 # Testing Requirements
-pytest
+pytest==6.2.1
+
+# Parsing requirements
+lark==0.11.1
+lark-parser==0.11.1
