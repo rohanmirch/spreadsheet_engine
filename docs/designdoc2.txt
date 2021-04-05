@@ -1,0 +1,191 @@
+CS130 Project 2 - Design Document
+=================================
+
+Please answer all questions in this design document.  Note that the final
+feedback section is optional, and you are not required to answer it if you
+don't want to.
+
+Unanswered or incompletely answered questions, or answers that don't actually
+match the code/repository, will result in deductions.
+
+Answers don't have to be deeply detailed!  We are mainly looking for an
+overview or summary description of how your project works, and your team's
+experiences working on this project.
+
+Logistics (7 points)
+--------------------
+
+L1.  [2pts] Enumerate all teammates here.
+
+Rohan Mirchandani
+Alex Janosi
+
+L2.  [2pts] What did each teammate focus on during this project?
+
+Rohan: Reordering and copying sheets, renaming sheets, and moving cells.
+Alex: Loading and saving workbooks and copy cells.
+
+We worked on cell update notifications and performance together.
+
+L3.  [3pts] Approximately how many hours did each teammate spend on the project?
+
+Rohan: 15 hours
+Alex: 12 hours
+
+Spreadsheet Engine Design (20 points)
+-------------------------------------
+
+D1.  [4pts] Briefly describe how your workbook-loading code operates.  Does
+     it do anything sophisticated to optimize the performance of loading a
+     workbook, such as deferring cell-value update calculations, or analyzing
+     the graph of cell dependencies?
+
+     The workbook-loading code works by utilizing the code we wrote last week.
+     First, it makes sure that all the necessary contents are present and the
+     correct types. Then, it makes use of new_sheet and set_cell_contents.
+     Since json.load will get rid of any duplicates, we only have to set a
+     cell once.
+
+D2.  [4pts] When renaming a sheet, cells with formulas that explicitly
+     reference the renamed sheet must be updated with the new sheet name.
+     How does your implementation identify these cells?
+
+     Each cell object holds a boolean is_formula that indicates whether the
+     contents is a formula or not. If the cell is a formula and the formula
+     contains the old sheet name, then it is updated with the renamed sheet.
+
+D3.  [4pts] Moving and copying regions of a sheet are very similar operations,
+     with only a few differences between them.  How did your team take advantage
+     of the similarity of these two operations to reduce the amount of code
+     required to provide this functionality?
+
+     We made a helper function that does the overlapping functionality
+     then called it in move_cells() and copy_cells().
+
+D4.  [4pts] How does your implementation address the challenges of moving or
+     copying a region of cells where the source and target regions overlap?
+
+     When we move to overlapping regions, we use sets difference to compute the
+     overlapping and ignore it. This way we aren't emptying those cells, Then
+     re-setting them. When copying, we just set the target cells.
+
+D5.  [4pts] Enumerate and briefly describe any portions of your Project 1
+     design that were affected or invalidated specifically by Project 2
+     requirements, along with how you adjusted your design to support them.
+
+     Most of our previous code held strong. If anything, our design made it
+     easy to add new functionality. For example, we could easily add new
+     attributes to our classes to keep track of the functions inputted by
+     notify_cells_changed. Also, some of code that was not used as much last
+     week proved very useful this week, like our is_formula boolean for cell
+     updates.
+
+Performance Analysis (28 points)
+--------------------------------
+
+In this project you must measure and analyze the performance of two central
+areas of your spreadsheet engine.  Write some test code to exercise these
+aspects of your engine, and use a profiler to identify where your program is
+spending the bulk of its time.
+
+A1.  [8pts] What are the hot-spots when updating long chains of cell references,
+     where each cell depends only on one other cell?  Include the data that
+     indicates these hot-spots.
+
+     We used pyinstrument to examine updating a 9999-cell long dependency.
+     The entire run time was 10.328 seconds, with 9.777 seconds being spent
+     spent on parsing. The rest of set_cell_contents, including the updating
+     and formula transforming, ran relatively quickly.
+
+A2.  [8pts] What are the hot-spots when updating cells that are referenced by
+     many other cells, perhaps with much shallower chains?  Include the data
+     that indicates these hot-spots.  Are the hot-spots the same as in A1, or
+     are they different?
+
+     We updated a cell with 9999 dependent cells. The entire process took 14.340
+     seconds. Similarly to the long chain updating, formula parsing
+     took up the majority of time (13.463s). Once again, the updating and
+     formula transformation (.607s) were quick.
+
+A3.  [8pts] What are the hot-spots in your cycle-detection code, with large or small
+     cycles in spreadsheet cells?  Include the data that indicates these
+     hot-spots.
+
+     We set a sell that created a cycle of 9999 cells. The entire process took
+     9.671 seconds. With the hotspot again being parsing (9.163s). Therefore,
+     this process is fine.
+
+     We also created 9999 circular reference 2-cell-loops, with one of the cell
+     depending on a separate cell. we then set the separate cell to a new value.
+     The updating process too 18.108 seconds, with about 18.805 seconds
+     for parsing. Parsing is clearly the hotspot once again, and the double-time
+     from the other scenarios makes sense because we set 2x the amount
+     of cells with formulas.
+
+A4.  [4pts] Briefly enumerate and describe the programs you created to exercise
+     the above behaviors.
+
+     Found in the test_(type)_performance files, we tested the situations
+     described above. We create a long chain of nodes, a node with a lot of
+     dependents, a very long circular dependency, and a lot of 2-cell-loops. We
+     ran the profiler on these situations.
+
+Implementation Process (12 points)
+----------------------------------
+
+This is a more streamlined version of the questions from the previous project.
+These are the typical questions for a project retrospective.  You will find
+the greatest benefit from these questions if you have a candid and constructive
+discussion as a team before writing your answers.
+
+P1.  [4pts] What went well for your team on this project?
+
+     Overall, this project went smoothly. Our implementation from the first
+     assignment made this assignment easier. The project was also easy to split
+     up, so we could work in our own time. It was easy to test these functions
+     with our previous work.
+
+P2.  [4pts] What could have gone better for your team on this project?
+
+     We could of finished the project on time, but we took a late token to make
+     sure everything was solid. One of the members had a lot of work this week,
+     and he started pretty late on the project. That's just Caltech, so we
+     appreciate the late token.
+
+P3.  [4pts] What would you like to improve about your team's development
+     process, going forward?
+
+     We did pretty well compared to last week with synchronizing work.
+     One thing that would be helpful would be automated github tests, so
+     if one of us pushes work that we didn't have time to write tests for,
+     the other would know exactly needs to be fixed.
+
+
+Section F:  CS130 Project 1 Feedback [OPTIONAL]
+-----------------------------------------------
+
+These questions are OPTIONAL, and you do not need to answer them.  Your grade
+will not be affected by answering or not answering them.  Also, your grade will
+not be affected by negative feedback - we want to know what went poorly so that
+we can improve future versions of the course.
+
+F1.  What parts of the assignment did you find highly enjoyable?  Conversely,
+     what parts of the assignment did you find unenjoyable?
+
+     It was nice to have the hard parts done and add easier functionality.
+
+F2.  What parts of the assignment helped you learn more about software
+     engineering best-practices, or other useful development skills?
+     What parts were not helpful in learning these skills?
+
+     Just learning things on the fly like the transformer.
+
+F3.  Were there any parts of the assignment that seemed _unnecessarily_ tedious?
+     (Some parts of software development are always tedious, of course.)
+
+     No, this assignment was much less tedious than the first.
+
+F4.  Do you have any feedback and/or constructive criticism about how this
+     project can be made better in future iterations of CS130?
+
+     Not really, this was a nice assignment.

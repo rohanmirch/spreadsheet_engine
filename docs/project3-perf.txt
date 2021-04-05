@@ -1,0 +1,25 @@
+-----
+
+We think that the queue is growing exponentially when cells
+have multiple parents and children in a chain.
+
+This is because the fibonacci speed test (N = 1000) timed out.
+
+After every iteration of our BFS, we removed duplicates from the queue.
+Now the fibonacci test (N = 1000) takes 2.772 seconds, which is a drastic
+improvement from the time out. This validates our change.
+
+-----
+
+We think that we are updating too many descendent cells when we change the
+value of a cell.
+
+We think this because parsing takes 1.37 / 1.45 seconds of our
+long chain test ( N = 1000) and 1.995/2.218 seconds of our wide chain test.
+
+This change did not affect the total parsing time or speeds: 1.34/1.42 seconds
+for long chain test, and 2.01/2.25 seconds for wide chain test. This is
+probably due to the fact that all cell values are updated in those tests.
+It is inconclusive whether this change improves speed at this point.
+
+-----

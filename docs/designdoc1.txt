@@ -1,0 +1,198 @@
+CS130 Project 1 - Design Document
+=================================
+
+Please answer all questions in this design document.  Note that the final
+feedback section is optional, and you are not required to answer it if you
+don't want to.
+
+Unanswered or incompletely answered questions, or answers that don't actually
+match the code/repository, will result in deductions.
+
+Answers don't have to be deeply detailed!  We are mainly looking for an
+overview or summary description of how your project works, and your team's
+experiences working on this project.
+
+Logistics
+---------
+
+L1.  Enumerate all teammates here.
+
+Rohan Mirchandani
+Alex Janosi
+
+L2.  What did each teammate focus on during this project?
+
+Rohan: Basic Structure, Parser
+Alex: Cell Updating and Testing
+
+We did a lot of parsing and cell updating logic together.
+
+L3.  Approximately how many hours did each teammate spend on the project?
+
+Rohan: 20 hours
+Alex: 15 hours
+
+Spreadsheet Engine Design
+-------------------------
+
+D1.  Describe the high-level design abstractions (e.g. classes and/or
+     submodules) in your spreadsheet engine, and what purposes these various
+     abstractions fulfill.
+
+     Workbook: This is the Workbook api. Each Workbook holds a dictionary of
+     sheets, and a list to keep track of the sheet names. There is
+     also a dictionary of sheets that are not created, but have been referenced
+     or deleted. This is where the cell updating logic is written, and uses
+     parser/evaluator objects to calculate cell values in get_cell_contents.
+     Sheet: Each sheet object holds a dictionary of cells, the actual sheet name,
+     and the logic for computing the sheet extent.
+     Cell: Keeps cell contents, values, and cells that depend on the cell or
+     that the cell depends on. Cell also holds useful helper functions for
+     parsing cells contents and locations. Cells have lists of children:
+     cells that directly depend on the given cell, and parents: cells that the
+     current cell directly references.
+     evaluator: The parser evaluator object and the corresponding logic. This
+     is used in workbook.set_cell_contents. It also computes the cells parent
+     and references to nonexistent cells.
+
+
+D2.  Why did you choose the design you chose?  Describe other designs (or
+     perhaps earlier versions of the above design) that you considered,
+     and why you ended up not using them.
+
+     We chose the design we have because of its simplicity and efficiency. In
+     other iterations, we had more complicated data structures that made it
+     difficult to deal with later in smaller functions. We use dictionaries for
+     constant lookup and ease of use, especially since most workbooks, sheets,
+     and cells are parsed as strings. We considered creating subclasses for
+     the sheets, but this made it more complicated for this reason.
+
+D3.  At a high level (e.g. pseudocode or higher), enumerate the steps that
+     your spreadsheet engine goes through when a caller sets a cell's contents.
+
+     1. Check if sheet and cell locations are valid
+     2. Store the previous cell at that location (if there was one)
+     3. Set the sell value if its not a formula
+     4. If it is a formula, parse and evaluate. Get the cells parents and
+     transfer children over from previous cell.
+     5. Create parent cells in non existent sheets
+     6. Add current cell to children of its parent
+     7. Remove the current cell from cells that are no longer parents
+     8. Use BFS to see if current cell is a child of itself to check for
+    circular reference errors
+     9. Use BFS to update children cells, ignore circular reference loops
+
+D4.  How does your spreadsheet engine identify what other cells need updating
+     when a cell's contents are changed?  (Assume no evaluation errors occur.)
+     Does it update cells in any particular order?  Are there any nuances in
+     how your engine updates cells?
+
+     Our spreadsheet engine follows a non-recursive BFS format using a queue.
+     In our implementation, we have a list that specifies the cells that depend
+     on a given cell (children). This allows us to go down the line of
+     descendants of the cell that gets changed.
+     We perform BFS twice: once to find cycles and once to update.
+     We do this by checking if the original cell is one of its children.
+     Then, we can update the cells in order while identifying cycles. Here,
+     if we find a cell that updates from a CIRC REF to a CIRC REF, we know its
+     part of an independent circular loop, so we ignore it and don't update its
+     children. We did not find any problems, as certain combinations may lead
+     to a cell being updated multiple times to get the correct value.
+
+D5.  How does your spreadsheet engine identify cycles between cells when a
+     cell update is performed?
+
+     Similar to what we said before, we perform BFS every time a cell is
+     updated. If we ever come back to the the cell that is being updated, we
+     have found a loop. Loops in the children that do not include the current
+     cell are found when the BFS update iteration does not affect a cell
+     with a circ. ref error (described above).
+
+D6.  What steps does your spreadsheet engine go through when a sheet is deleted
+     from a workbook?
+
+     1. Check if valid sheet to delete.
+     2. Put sheet and all its contents in the dictionary for non-existent sheets.
+     3. Go through all its cells, and update their children if they are in valid
+        sheets. The children that reference the non existent sheets will Then
+        become a BAD_NAME error.
+
+Implementation Process
+----------------------
+
+P1.  Did your team gain any insights about software engineering best-practices
+     during this project?
+
+     We definitely learned a lot about class design and especially testing. Our
+     class definitions made it easy to access and modify our values, which
+     saved a lot of stress later. We wrote a large number of tests that helped
+     us catch small edge cases and understand our code better.
+
+P2.  How would you characterize the quality of your testing approach?  What
+     level of confidence do you have in the correctness of your spreadsheet
+     engine?  Briefly explain your answer.
+
+     We would say our testing was pretty good, but it could have been more
+     specific. We handled a lot of cases and specific examples, but we would
+     group tests together. In the future, we will probably stick to unit tests
+     for organizational purposes. We are fairly confident we hit a majority of
+     cases.
+
+P3.  Did you use any kind of collaborative construction techniques, e.g. code
+     reviews or pair-programming?  If so, what are your observations about its
+     usefulness?  Did you find it to have any downsides?
+
+     We used teletype on Atom. This allowed to code and collaborate at the same
+     time. This process was very useful for tackling some of the bigger issues,
+     like detecting cycles and updating cells. There were no major issues with
+     this application.
+
+P4.  Did you use the GitHub issue tracker to record bugs?  Why or why not?
+
+     We did not use the issue tracker. In most cases, we could just talk to
+     each other or send a simple message. With our small group size, it was
+     easy to just talk to each other directly.
+
+P5.  Did you use the GitHub issue tracker to record todo-tasks and task
+     completion?  Why or why not?
+
+     For similar reasons, we could just talk to each other. In larger groups,
+     these tools would be useful, but it did not make sense to use this
+     application. Instead, we could just meet to talk about it or message each
+     other to handle tasks.
+
+P6.  What would you like to improve about your team's development process,
+     going forward?
+
+     Have a better way of knowing when the other person is working so
+     no merge conflicts occur.
+
+Section F:  CS130 Project 1 Feedback [OPTIONAL]
+-----------------------------------------------
+
+These questions are OPTIONAL, and you do not need to answer them.  Your grade
+will not be affected by answering or not answering them.  Also, your grade will
+not be affected by negative feedback - we want to know what went poorly so that
+we can improve future versions of the course.
+
+F1.  What parts of the assignment did you find highly enjoyable?  Conversely,
+     what parts of the assignment did you find unenjoyable?
+
+     Learning the parser evaluator
+     Fun problem to work on as a group (especially cell updating)
+
+F2.  What parts of the assignment helped you learn more about software
+     engineering best-practices, or other useful development skills?
+     What parts were not helpful in learning these skills?
+
+     Definitely writing efficient tests
+
+F3.  Were there any parts of the assignment that seemed _unnecessarily_ tedious?
+     (Some parts of software development are always tedious, of course.)
+
+     It went pretty smoothly for us, but it did take a while to complete.
+
+F4.  Do you have any feedback and/or constructive criticism about how this
+     project can be made better in future iterations of CS130?
+
+     Not really

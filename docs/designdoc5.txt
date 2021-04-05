@@ -1,0 +1,243 @@
+CS130 Project 5 - Design Document
+=================================
+
+Please answer all questions in this design document.  Note that the final
+feedback section is optional, and you are not required to answer it if you
+don't want to.
+
+Unanswered or incompletely answered questions, or answers that don't actually
+match the code/repository, will result in deductions.
+
+Answers don't have to be deeply detailed!  We are mainly looking for an
+overview or summary description of how your project works, and your team's
+experiences working on this project.
+
+Logistics (7 points)
+--------------------
+
+L1.  [2pts] Enumerate all teammates here.
+
+      Rohan Mirchandani
+      Alex Janosi
+
+L2.  [2pts] What did each teammate focus on during this project?
+
+      Team worked together the entire time. We started with big fixes.
+      Then, we met to do the project and finalize with the design doc.
+
+L3.  [3pts] Approximately how many hours did each teammate spend on the project?
+
+      Rohan: 8 hours
+      Alex: 8 hours
+
+Choose Your Own Adventure (5 points)
+------------------------------------
+
+A1.  [2pts] Which project did your team choose to pursue?  Why?
+
+      We chose the "Refine the CS130 Specs" project. We chose this project
+      because we felt like it has a lot of worth. We are trying to mimic a
+      project that top companies have spent a lot of time thinking about. Also,
+      it would make it easier for students in the future if they have something
+      to compare their work to instead of posting hundreds of questions on
+      Piazza.
+
+A2.  [3pts] Please point us to the file(s) in your repository where we can
+     find the work for this project.  (For example, if your team wrote a
+     document, you can give us the repository path here.  If your team
+     worked on code, you can point us to the paths and Python modules we
+     should look at.)
+
+      Our document is called refinespecs.txt in the docs folder:
+      docs/refinespecs.txt. This contains our writeup as well as the link
+      to the spreadsheet where we did tests.
+
+
+CS130 Retrospective (38 points)
+-------------------------------------
+
+CS130 is focused on the software-construction aspects of software engineering.
+To gauge the course's effectiveness, we want to ask about your experience in
+the following areas.  For each area listed below, please answer the following
+questions:
+
+*   What new insights did you develop about that topic during the term?
+*   How do you expect these insights will be realized in future development
+    efforts?
+*   Did these insights come from course materials, experience from the
+    assignments, some combination of these, or perhaps some external source?
+*   Please elaborate on your answers where you think it will help us to
+    improve CS130.
+
+R1.  [4pts] General software design and implementation practices
+
+      We learned a couple new practices that will help us in the future. Some
+      things included practices like proxy patterns that apply to larger
+      projects. We will both be working on large projects at companies, so
+      things like this will help us handle large tasks. Most implementation
+      practices and general design came from practicing through the
+      assignments. Overall, it was good practice, and we learned a couple new
+      ways to deal with larger projects, which do not happen often in other
+      classes.
+
+R2.  [4pts] Software repository management
+
+      We learned general maintenance practices that will make us look more
+      professional in the future. Some of these practices included things like
+      git commit messages and general organization. These insights will be
+      useful in the future when we work in a more professional setting, with
+      program managers who will look over our code. These insights came from
+      the assignments and the course material, which built off our past
+      experience. These practices will be helpful moving forward.
+
+R3.  [4pts] Software testing and test automation
+
+      We probably did more testing here than in a majority of our other classes.
+      We learned the general format of unit testing and how to identify single
+      problems by creating many unique tests. These practices will definitely
+      be useful when we create code that affects our companies and users. These
+      insights came mostly through the assignments, as this is where the hard
+      work went in. We definitely feel that hardcore testing will become a
+      staple of our future practices.
+
+R4.  [4pts] Performance measurement and performance tuning
+
+      We learned a lot of how to perform the measurements and how to find the
+      bottlenecks in our code. We have barely used these tools, so it was fun
+      to be able to identify our slower chunks of code and see the improvements.
+      We will definitely use this while we are in industry, as we will want to
+      have efficient code. This can also be used for research purposes. Both of
+      us have done ML research, so this could help speed up those long waits.
+      These insights came mostly from the assignments, as it was easier to learn
+      directly on our code. This is a tool that we learned more about this term
+      and will keep with us as we go to higher work.
+
+R5.  [4pts] The use of other tools such as code-coverage tools and linters
+
+      We learned a lot about the different types of linters to use. We have
+      used linters in the past, but it was fun trying out the other types. The
+      linters are pretty similar, but they definitely helped us keep good
+      coding and commenting practices. We will probably take these learnings
+      into the future by using different methods to evaluate our code to make
+      sure it can be as concrete as possible. We gained these insights from the
+      assignments where we could directly apply the tools to our code. It would
+      be nice to have a list of all these tools at the beginning of the course,
+      as we only started using them on like assignment three when they were
+      mentioned.
+
+----
+
+Being a new course, CS130 certainly has much room for improvement.  These are
+some topics that we hope to cover in future versions of CS130; for each of them,
+please answer the following questions:
+
+*   Do you agree / strongly agree, or disagree / strongly disagree, that CS130
+    would benefit from the inclusion of these topics?
+*   How do you feel they might have changed your experiences with the course if
+    we had covered these topics?
+
+R6.  [3pts] Code quality / readability, e.g. good and bad idiomatic language
+     patterns, code commenting practices, function design, state management
+     in programs, etc.
+
+      We strongly agree that CS130 would benefit from the inclusion of these
+      practices. These are small things that make good coders into top industry
+      coders. These would especially be useful for the CS students at Caltech,
+      who are more worried about submitting an assignment on time rather than
+      the quality of their code. This probably would have made our experience
+      with the course a lot smoother when it comes to linter results and
+      trying to edit old code.
+
+R7.  [3pts] Software design patterns
+
+      We agree that CS130 would benefit from the inclusion of this topic.
+      We believe that design patterns could have made certain tasks easier,
+      but there could have been problems implementing these patterns.
+      We would have found it difficult to identify/implement some of the
+      design patterns without the assistance of the specs. Therefore, we
+      could have just been creating a harder problem to solve.
+
+R8.  [3pts] Writing good API documentation
+
+      We agree that CS130 would benefit from the inclusion of this topic, but
+      we do not really believe that our experience would have changed that
+      much. I think it would make it easier for someone using the API, but we
+      already know everything that the API contains. We could have written some
+      documentation, but we would not know the actual impact it has.
+      Nonetheless, it is good practice to do this documentation.
+
+----
+
+R9.  [3pts] Are there other topics we should include in CS130, not listed above?
+
+      One topic could have been identifying code smells. This is something we
+      struggled with at times. If we cannot get good practices working, it is
+      definitely worthwhile that bad practices are not present. Some of these
+      issues also popped up throughout the term, like the try catch every
+      error. Things like this can destroy code and ruin large projects. It is
+      especially important to avoid these practices in industry, so it would
+      be beneficial to be able to know bad practices to avoid.
+
+      Other than that, we felt most topics were helpful and enough.
+
+----
+
+R10. [3pts] Please list any areas where we can improve the quality of the
+     experience for students taking CS130 in the future.  (For example:  rapid
+     turnaround on CS130 assignment feedback is critical to a quality student
+     experience, and will also be much easier to achieve in future years, now
+     that the course infrastructure is largely in place.)
+
+      One area would be the timing of the automated tests. The TA feedback
+      was very useful, but it would not take away as many points as the scores
+      on the tests we received. This was somewhat frustrating at times because
+      we had to go in the past to see mistakes that we might not have been
+      able to fix before the next assignment. Obviously, you did not penalize
+      us for this, but we would like to make the improvements before the next
+      due date. Maybe those tests could be automated upon the due date or a
+      couple days after?
+
+R11. [3pts] How do you view your experience with CS130 overall?  Do you feel
+     that the course was helpful for you?  Do you feel like the course is "on
+     the right track" to being a very useful course for students in the future?
+     Do you have any general feedback or suggestions beyond what you have
+     already shared earlier?
+
+      We were unexpectedly pleased with the class. We came in with no idea
+      what the course was going to look like, and we actually had a lot of fun
+      with the content. We will both be going into software engineering roles,
+      and this class definitely helped us learn new practices while refining
+      old ones. We do believe that the course in on track. Even with the class
+      being made on the spot, it was very useful, so we believe it will be
+      great once finalized. Overall, we do not have any major feedback, as the
+      class seems like it will be finalized before next year.
+
+R12. [0pts] If you are not a senior, would you be interested in TAing this
+     course in the future?
+
+     Both of us are seniors :(
+
+
+Section F:  CS130 Project 5 Feedback [OPTIONAL]
+-----------------------------------------------
+
+These questions are OPTIONAL, and you do not need to answer them.  Your grade
+will not be affected by answering or not answering them.  Also, your grade will
+not be affected by negative feedback - we want to know what went poorly so that
+we can improve future versions of the course.
+
+F1.  What parts of the assignment did you find highly enjoyable?  Conversely,
+     what parts of the assignment did you find unenjoyable?
+
+
+F2.  What parts of the assignment helped you learn more about software
+     engineering best-practices, or other useful development skills?
+     What parts were not helpful in learning these skills?
+
+
+F3.  Were there any parts of the assignment that seemed _unnecessarily_ tedious?
+     (Some parts of software development are always tedious, of course.)
+
+
+F4.  Do you have any feedback and/or constructive criticism about how this
+     project can be made better in future iterations of CS130?

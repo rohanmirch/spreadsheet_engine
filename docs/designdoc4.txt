@@ -1,0 +1,163 @@
+CS130 Project 4 - Design Document
+=================================
+
+Please answer all questions in this design document.  Note that the final
+feedback section is optional, and you are not required to answer it if you
+don't want to.
+
+Unanswered or incompletely answered questions, or answers that don't actually
+match the code/repository, will result in deductions.
+
+Answers don't have to be deeply detailed!  We are mainly looking for an
+overview or summary description of how your project works, and your team's
+experiences working on this project.
+
+Logistics (7 points)
+--------------------
+
+L1.  [2pts] Enumerate all teammates here.
+
+      Rohan Mirchandani
+      Alex Janosi
+
+L2.  [2pts] What did each teammate focus on during this project?
+
+      Rohan: cell ranges, notification, and tests
+      Alex: Sorting, performance, and tests
+
+L3.  [3pts] Approximately how many hours did each teammate spend on the project?
+
+      Rohan: 15 hours
+      Alex: 10 hours
+
+Spreadsheet Engine Design (34 points)
+-------------------------------------
+
+D1.  [5pts] Briefly describe the changes you made to the Lark parser grammar to
+     support cell-range references.  Can they appear anywhere in expressions, or
+     does your grammar constrain them to appear only in particluar contexts?
+
+     cell_range's are defined as an optional sheetname and two CELLREF's
+     connected with a ":". The cell_range object is ONLY referenced in the
+     arg_list object. This means functions can take in either
+     compare_expr's (everything else) or cell_ranges. It also means cell_ranges
+     will produce a PARSE_ERROR anywhere else.
+
+D2.  [5pts] How easy or hard was it to incorporate cell-range references into
+     formula evaluation?  Elaborate on your answer.
+
+     It wasn't that hard. We created a cell_range function in the evaluator
+     that returns a nested list of cell values for a valid range,
+     or a list with just one BAD_NAME error if the range is out of bounds.
+     We then added the new functions that can deal with cell_ranges to our
+     functions.py file.
+     Then, in func_expr, we didn't need to change anything except
+     adding specific error catching for DIVIDE_BY_ZERO or BAD_NAME thrown
+     from the functions.
+
+D3.  [5pts] How did you incorporate cell-range references into the cycle-
+     detection functionality of your project?  Explain why you chose this design
+     over other possible designs; for example, what benefits were you hoping to
+     achieve, or what issues were you trying to avoid?
+
+     We just added all the cells in a referenced cell range to the
+     cell's parents. This is done in the parser when the cell range is unwrapped.
+    This means that if any of them create a circular loop or
+     are updated, the current cell will react accordingly. This was the simplest
+     approach, as our parser already had a list of parents. Also, we wanted to avoid
+     manually generating the cell range outside of the parser.
+
+D4.  [5pts] Give an overview of the structural aspects (modules, classes, etc.)
+     of how you implemented sorting.  Do you sort the rows directly?  Do you
+     use proxy objects instead?  Some other technique?
+
+     We created a class for the proxy pattern. This class holds the row values,
+     row index, and the column to sort on. We implemented methods to classify
+     values as less than or equal based on the logic in assignment 3. These
+     methods could then be used for total_ordering, which sorts the rows.
+
+D5.  [5pts] Give an overview of the behavior aspects of how you implemented
+     sorting.  At a high level, enumerate the steps that your engine goes
+     through to sort a region of a spreadsheet.
+
+     Once sorting is called, we create proxy objects for the rows being sorted.
+     A list of the proxy objects are put together and then sorted using
+     total_ordering. Each object holds its original row and the sorted ordering
+     is the new place of the row. We can use this information to then set the
+     rows with the original contents, which were stored beforehand, to ensure
+     the old contents are not overwritten.
+
+D6.  [5pts] How does your implementation solve the problem of supporting a
+     user-specified row ordering based on both the columns and the ordering to
+     sort by?  Did you create any classes or functions to help specifically with
+     this task?
+
+     As described in D5, the row proxy objects have __lt__ and __eq__
+     functions. The less that iterates through the column indexes of the two rows
+     until the two values are not equal, then returns the corresponding
+     boolean for "less than". The __eq__ function simply ensures that every value
+     in the row (for the given column indices) is equal, which is the "equal"
+     operation. We then use @func_tools.total_ordering to complete the
+     comparison logic.
+
+D7.  [4pts] Briefly describe the changes you made to your spreadsheet engine to
+     satisfy the stricter cell-change notification behaviors. Did you find this
+     to be largely straightforward to change? Why or why not?
+
+     We created a separate function to deal with calling the notification
+     functions. Then, we added a flag to set_cell_contents to determine if the
+     operation was a bulk operation on a large range of cells (move, sort, etc).
+     Therefore, we could call this function at the end of bulk functions once
+     the updated cells take their final value instead of calling it on every
+     update. The changed cells continuously update but are only used in the
+     notification function at the end.
+
+Implementation Process (9 points)
+----------------------------------
+
+This is a more streamlined version of the questions from the previous project.
+These are the typical questions for a project retrospective.  You will find
+the greatest benefit from these questions if you have a candid and constructive
+discussion as a team before writing your answers.
+
+P1.  [3pts] What went well for your team on this project?
+
+      It was pretty easy to add the new feature into our existing implementation.
+      We also worked well to complete the sorting logic quite quickly
+      as well as improve rename performance by 5 times.
+
+P2.  [3pts] What could have gone better for your team on this project?
+
+      Honestly, nothing caused major problems. We had some small issues to fix,
+      but we communicated the problems early and fixed them together. We could
+      have started a little earlier, but everything worked out fine.
+
+P3.  [3pts] What would you like to improve about your team's development
+     process, going forward?
+
+     Nothing huge. Maybe we we could include an automated code coverage report
+     for our test suite when we push to Github.
+
+Section F:  CS130 Project 4 Feedback [OPTIONAL]
+-----------------------------------------------
+
+These questions are OPTIONAL, and you do not need to answer them.  Your grade
+will not be affected by answering or not answering them.  Also, your grade will
+not be affected by negative feedback - we want to know what went poorly so that
+we can improve future versions of the course.
+
+F1.  What parts of the assignment did you find highly enjoyable?  Conversely,
+     what parts of the assignment did you find unenjoyable?
+
+
+F2.  What parts of the assignment helped you learn more about software
+     engineering best-practices, or other useful development skills?
+     What parts were not helpful in learning these skills?
+
+
+F3.  Were there any parts of the assignment that seemed _unnecessarily_ tedious?
+     (Some parts of software development are always tedious, of course.)
+
+
+F4.  Do you have any feedback and/or constructive criticism about how this
+     project can be made better in future iterations of CS130?

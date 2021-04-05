@@ -1,0 +1,26 @@
+-----
+We think that set cell contents is taking too long in bulk operations.
+
+This is because the copy_sheet speed test takes 7.1 seconds, with 7seconds
+on set_cell_contents. Within that, get_cell_value is taking up 3.4 seconds.
+
+We replaced calls to get_cell_value with directly accessing the child values
+in our BFS. This dropped the runtime of test_copy_sheet to 3.19 seconds, which
+is less than half. Similarly, test_rename_sheet went from 14 seconds to 6.9 seconds,
+and test_move_cells went from 9.3 seconds to 5 seconds. This validates our change.
+
+-----
+We think that we are redundantly setting cell contents.
+
+When we have bulk operations, we spend a lot fo time in set_cell_contents.
+For example test_rename_sheet takes 10 seconds, with 9.9 for set_cell_contents.
+
+We now only call the rest of set_cell_contents if the old contents is
+not the same as the new contents (unless we are manually updating a cell).
+This improved test_rename_sheet to 2.01 seconds, which validates our idea
+and significantly improves performance.
+
+
+
+
+-----

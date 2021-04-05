@@ -1,0 +1,231 @@
+CS130 Project 3 - Design Document
+=================================
+
+Please answer all questions in this design document.  Note that the final
+feedback section is optional, and you are not required to answer it if you
+don't want to.
+
+Unanswered or incompletely answered questions, or answers that don't actually
+match the code/repository, will result in deductions.
+
+Answers don't have to be deeply detailed!  We are mainly looking for an
+overview or summary description of how your project works, and your team's
+experiences working on this project.
+
+Logistics (7 points)
+--------------------
+
+L1.  [2pts] Enumerate all teammates here.
+
+Rohan Mirchandani
+Alex Janosi
+
+L2.  [2pts] What did each teammate focus on during this project?
+
+Rohan: Boolean comparison, formula updating, performance improvements
+Alex: Function evaluation, testing, code cleanup
+
+L3.  [3pts] Approximately how many hours did each teammate spend on the project?
+
+Rohan: 15 hours
+Alex: 15 hours
+
+Spreadsheet Engine Design (18 points)
+-------------------------------------
+
+D1.  [3pts] Briefly describe the changes you made to the Lark parser grammar to
+     support Boolean literals and conditional expressions.  How did you ensure
+     that conditional expressions are lower precedence than arithmetic and
+     string concatenation operations?
+
+     We added a compare_expr that is lower precedence than expression (which
+     include arithmetic and string operations).
+     The compare_expr evaluates to a BOOL type, which are literally the words
+     "true" or "false". The compare_expr takes a BOOL_OP, which are the given
+     boolean operators.
+
+D2.  [3pts] Briefly describe how function invocation works in your spreadsheet
+     engine.  How easy or hard would it be for you to add new functions to your
+     engine?  What about a third-party developer?  How well does your code
+     follow the Open/Closed Principle?
+
+     The functions are stored as callables in a dictionary as an instance
+     variable of Workbook, which is loaded in from the functions.py module.
+     Each key is the exact function name.
+     The lark evaluator sees a function call, then calls the dictionary entry
+     using they function's name as a key. All functions take in (*args),
+     and the number of args is checked inside of each functions. It is easy
+     to add more functions because the third party developer would just have
+     to add their function to functions.py. Therefore, our code is open for
+     extension. Our function implementation is mostly closed because
+     the modification would simply be writing new functions in functions.py.
+
+
+D3.  [3pts] The comparison functionality includes a number of comparison and
+     conversion rules.  Different functions may require specific numbers and
+     types of arguments.  How did your team structure the code that imposes
+     these rules?  How did your approach affect the reusability and testability
+     of these operations?
+
+     Our code handles this by allowing a variable number of inputs and
+     converting them to the appropriate type. As stated, every function takes
+     in (*args), which we can then manipulate. We created functions to handle
+     the conversions and then perform the operation based on the number of
+     inputs. We used lambda functions for things like AND or OR that can have
+     many inputs. Other functions were more simple since we would check for
+     the correct number of inputs first. This allows us to reuse the operations
+     over again, as we can have any type and number of inputs. Testing these
+     functions were also easy because of this flexibility.
+
+D4.  [3pts] Were any changes to your design required to support the
+     IFERROR()/ISERROR() functions?  If so, what assumptions did your
+     previous design include that were invalidated by these operations?
+
+     Our main previous design was solid and didn't need to be changed.
+     The only addition we made was to make sure to check for CIRCULAR_REFERENCE
+     errors after setting descendants, because functions could cause
+     a circular reference error to not be set when updating descendants before.
+
+D5.  [3pts] Were any changes to your design required to support the
+     INDIRECT() function?  If so, what assumptions did your previous
+     design include that were invalidated by these operations?
+
+     Same as 4). We just needed to explicitly check for CIRCULAR_REFERENCE
+     when updating descendants of a cell, so that CIRCULAR_REFERENCE errors
+     trump other errors.
+
+D6.  [3pts] What linter did your team use on your project?  Was this the first
+     project in which you used a linter?  Did the linter identify any serious
+     issues you were previously unaware of?
+
+     We used pylint as suggested. This was not the first project where we used
+     a linter. The linter identified a lot of small things, but none of these
+     issues were serious. We just had to do some cleanup for things like
+     unused variables and docstrings instead of comments. No major issues.
+
+Performance Analysis (23 points)
+--------------------------------
+
+In this project you must measure and analyze the performance of features that
+generate large bulk changes to a workbook:  loading a workbook, copying or
+renaming a sheet, and moving or copying an area of cells.  Write some test code
+to exercise these aspects of your engine, and use a profiler to identify where
+your program is spending the bulk of its time.
+
+A1.  [5pts] What are the hot-spots when loading a large workbook?  Include the
+     data that indicates these hot-spots.
+
+     The major hot-spot lies within setting the cell contents. We created a
+     workbook with 1000 cells and saved it to a file. We then loaded this file
+     in with the profiler. Overall, the time took 1.4 seconds with 1.366 lying
+     within the set_cell_contents. Of that, 1.3 seconds were within the parser.
+     Since the workbook consisted of mostly dependencies on cells, this makes
+     sense.
+
+A2.  [5pts] What are the hot-spots when copying a sheet?  Include the data that
+     indicates these hot-spots.
+
+     We run copy_sheet on a sheet that has a chain of 1000 dependent cells.
+     It took 11.3 seconds, with 11.2 seconds on set_cell_contents.
+     Parsing took  about 4 seconds, and get cell_value too  5.4 seconds.
+
+     The issue therefore seems to be that we are repeatedly calling
+     set_cell_contents for every cell in the new sheet, and descendants are
+     getting set multiple times.
+
+
+A3.  [5pts] What are the hot-spots when renaming a sheet?  Include the data that
+     indicates these hot-spots.
+
+     We run rename_sheet on a sheet that has a 1000-cell dependence chain, with
+     1000 cells in another sheet that also reference those cells.
+
+     It took 19.5 seconds, with 17.4 seconds on set_cell_contents.
+     Within that parsing took 4.9 seconds, and get_cell_value took 9.1 seconds.
+     Once again, this is probably because we repeatedly call set_cell_contents,
+     and descendants are getting set multiple times.
+
+A4.  [5pts] What are the hot-spots when moving or copying an area of cells?
+     Include the data that indicates these hot-spots.
+
+     We run copy_cells on a 1000-cell dependence chain.
+     It took 12.19 seconds, with 10.45 seconds of it being set_cell_contents.
+     Within that parsing took 3.8 seconds. The issue therefore seems to be that
+     we are repeatedly calling set_cell_contents for every cell.
+
+     When we run move_cells the 1000-cell chain, we get very similar results.
+
+A5.  [3pts] Briefly enumerate and describe the programs you created to exercise
+     the above behaviors.
+
+     As described in each section, we create large tests for the specific cases.
+     For loading sheets, we created a 1000 cell workbook and saved it. We then
+     loaded in this large file to see the results. For copying a sheet, we run 
+     copy_sheet on a sheet that has a chain of 1000 dependent cells. For 
+     renaming a sheet, we run rename_sheet on a sheet that has a 1000-cell 
+     dependence chain, with 1000 cells in another sheet that also reference 
+     those cells. For moving or copying cells, we run copy_cells on a 1000-cell 
+     dependence chain.
+
+     test_loading.py
+     test_copy_sheet.py
+     test_rename_sheet.py
+     test_copy_cells.py
+     test_move_cells.py
+
+
+Implementation Process (9 points)
+----------------------------------
+
+This is a more streamlined version of the questions from the previous project.
+These are the typical questions for a project retrospective.  You will find
+the greatest benefit from these questions if you have a candid and constructive
+discussion as a team before writing your answers.
+
+P1.  [3pts] What went well for your team on this project?
+
+     The distribution of work was good. Each member tackled their own parts
+     individually, and the group came together to address large issues.
+     Communication allowed members to stay on the same page.
+
+P2.  [3pts] What could have gone better for your team on this project?
+
+     We could have used a linter earlier. This led to a lot of time taken to
+     address smaller things. No major issues other than that.
+
+P3.  [3pts] What would you like to improve about your team's development
+     process, going forward?
+
+     Using the linter as we work will be a big one. Other than that, our team
+     has been efficient and positive!
+
+Section F:  CS130 Project 3 Feedback [OPTIONAL]
+-----------------------------------------------
+
+These questions are OPTIONAL, and you do not need to answer them.  Your grade
+will not be affected by answering or not answering them.  Also, your grade will
+not be affected by negative feedback - we want to know what went poorly so that
+we can improve future versions of the course.
+
+F1.  What parts of the assignment did you find highly enjoyable?  Conversely,
+     what parts of the assignment did you find unenjoyable?
+
+     The functions were cool. Cleaning up with the linter was not so nice. The
+     performance improvements also felt good.
+
+F2.  What parts of the assignment helped you learn more about software
+     engineering best-practices, or other useful development skills?
+     What parts were not helpful in learning these skills?
+
+     Everything felt pretty useful this week. The functions were a cool
+     application and the performance/linter section is necessary.
+
+F3.  Were there any parts of the assignment that seemed _unnecessarily_ tedious?
+     (Some parts of software development are always tedious, of course.)
+
+     Nothing really. Most tedious stuff was necessary.
+
+F4.  Do you have any feedback and/or constructive criticism about how this
+     project can be made better in future iterations of CS130?
+
+     Nope, maybe just suggest some tools like the linter earlier.
