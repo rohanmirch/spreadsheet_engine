@@ -1,0 +1,7 @@
+# Ignore pycache files
+sheets/__pychache__/
+*.pyc
+tests/.cache/*
+
+# Mac Config
+.DS_store
